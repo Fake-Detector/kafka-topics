@@ -12,7 +12,6 @@ services:
         image: confluentinc/cp-kafka:latest
         depends_on:
             - zookeeper
-        command: ["sh", "-c", "sleep 30 && ./start-kafka.sh"]
         environment:
             KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092,PLAINTEXT_HOST://localhost:29092
             KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
@@ -30,10 +29,10 @@ services:
             - -c
             - |
                 sleep 40 # wait for kafka to start
-                ./kafka-topics.sh --create --topic post_topic --partitions 3 --replication-factor 1 --bootstrap-server kafka:9092
-                ./kafka-topics.sh --create --topic monitoring_topic --partitions 3 --replication-factor 1 --bootstrap-server kafka:9092
-                ./kafka-topics.sh --create --topic post_text_topic --partitions 3 --replication-factor 1 --bootstrap-server kafka:9092
-                ./kafka-topics.sh --create --topic post_photo_topic --partitions 3 --replication-factor 1 --bootstrap-server kafka:9092
-                ./kafka-topics.sh --create --topic post_audio_topic --partitions 3 --replication-factor 1 --bootstrap-server kafka:9092
-                ./kafka-topics.sh --create --topic post_video_topic --partitions 3 --replication-factor 1 --bootstrap-server kafka:9092
-                ./kafka-topics.sh --create --topic post_result_topic --partitions 3 --replication-factor 1 --bootstrap-server kafka:9092
+                bin/kafka-topics --create --topic post_topic --partitions 3 --replication-factor 1 --bootstrap-server kafka:9092
+                bin/kafka-topics --create --topic monitoring_topic --partitions 3 --replication-factor 1 --bootstrap-server kafka:9092
+                bin/kafka-topics --create --topic post_text_topic --partitions 3 --replication-factor 1 --bootstrap-server kafka:9092
+                bin/kafka-topics --create --topic post_photo_topic --partitions 3 --replication-factor 1 --bootstrap-server kafka:9092
+                bin/kafka-topics --create --topic post_audio_topic --partitions 3 --replication-factor 1 --bootstrap-server kafka:9092
+                bin/kafka-topics --create --topic post_video_topic --partitions 3 --replication-factor 1 --bootstrap-server kafka:9092
+                bin/kafka-topics --create --topic post_result_topic --partitions 3 --replication-factor 1 --bootstrap-server kafka:9092
