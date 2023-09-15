@@ -1,0 +1,43 @@
+name: Deploy to GCP VM
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+
+    - name: Tar and copy files to GCP VM
+      env:
+        PRIVATE_KEY: ${{ secrets.GCP_SA_KEY }}
+      run: |
+        echo "$PRIVATE_KEY" > service_account.json
+        gcloud auth activate-service-account --key-file=service_account.json
+
+        gcloud config set project fakedetector-395708
+    
+        mkdir temp_deploy
+        rsync -av --progress ./ temp_deploy/ --exclude temp_deploy
+    
+        tar czf repo.tar.gz -C temp_deploy .
+        ls -alh
+
+        # Генерируем ключи SSH вручную
+        ssh-keygen -t rsa -N "" -f ~/.ssh/google_compute_engine
+        # Добавляем ключ в gcloud
+        gcloud compute config-ssh --quiet
+    
+        gcloud compute scp --verbosity=debug --project fakedetector-395708 repo.tar.gz instance-1:~/deploy --zone europe-north1-a
+        gcloud compute ssh --project fakedetector-395708 instance-1 --zone europe-north1-a --command="ls -alh ~/deploy"
+
+        
+    - name: Extract files and deploy with Docker on VM
+      run: |
+        gcloud compute ssh instance-1 --zone europe-north1-a --command="rm -rf ~/deploy/kafka-topics && mkdir -p ~/deploy/kafka-topics && tar xzf ~/deploy/repo.tar.gz -C ~/deploy/kafka-topics && cd ~/deploy/kafka-topics && docker image prune && docker-compose up -d --build"
+
