@@ -18,13 +18,22 @@ services:
             KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
             KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
             KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
-            KAFKA_CREATE_TOPICS: >-
-                post_topic:3:1,
-                monitoring_topic:3:1,
-                post_text_topic:3:1,
-                post_photo_topic:3:1,
-                post_audio_topic:3:1,
-                post_video_topic:3:1,
-                post_result_topic:3:1
         ports:
             - 29092:29092
+
+    kafka-setup:
+        image: confluentinc/cp-kafka:latest
+        depends_on:
+            - kafka
+        command:
+            - bash
+            - -c
+            - |
+                sleep 40 # wait for kafka to start
+                kafka-topics.sh --create --topic post_topic --partitions 3 --replication-factor 1 --bootstrap-server kafka:9092
+                kafka-topics.sh --create --topic monitoring_topic --partitions 3 --replication-factor 1 --bootstrap-server kafka:9092
+                kafka-topics.sh --create --topic post_text_topic --partitions 3 --replication-factor 1 --bootstrap-server kafka:9092
+                kafka-topics.sh --create --topic post_photo_topic --partitions 3 --replication-factor 1 --bootstrap-server kafka:9092
+                kafka-topics.sh --create --topic post_audio_topic --partitions 3 --replication-factor 1 --bootstrap-server kafka:9092
+                kafka-topics.sh --create --topic post_video_topic --partitions 3 --replication-factor 1 --bootstrap-server kafka:9092
+                kafka-topics.sh --create --topic post_result_topic --partitions 3 --replication-factor 1 --bootstrap-server kafka:9092
