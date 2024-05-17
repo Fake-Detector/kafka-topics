@@ -7,6 +7,8 @@ services:
             ZOOKEEPER_TICK_TIME: 2000
         ports:
             - 22181:2181
+        networks:
+            - shared_network
 
     kafka:
         image: confluentinc/cp-kafka:latest
@@ -20,6 +22,8 @@ services:
             KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
         ports:
             - 29092:29092
+        networks:
+            - shared_network
 
     kafka-setup:
         image: confluentinc/cp-kafka:latest
@@ -30,10 +34,16 @@ services:
             - -c
             - |
                 sleep 40
-                kafka-topics --create --topic post_topic --partitions 3 --replication-factor 1 --bootstrap-server kafka:9092
-                kafka-topics --create --topic monitoring_topic --partitions 3 --replication-factor 1 --bootstrap-server kafka:9092
-                kafka-topics --create --topic post_text_topic --partitions 3 --replication-factor 1 --bootstrap-server kafka:9092
-                kafka-topics --create --topic post_photo_topic --partitions 3 --replication-factor 1 --bootstrap-server kafka:9092
-                kafka-topics --create --topic post_audio_topic --partitions 3 --replication-factor 1 --bootstrap-server kafka:9092
-                kafka-topics --create --topic post_video_topic --partitions 3 --replication-factor 1 --bootstrap-server kafka:9092
-                kafka-topics --create --topic post_result_topic --partitions 3 --replication-factor 1 --bootstrap-server kafka:9092
+                kafka-topics --create --topic post --partitions 3 --replication-factor 1 --bootstrap-server kafka:9092
+                kafka-topics --create --topic monitoring --partitions 3 --replication-factor 1 --bootstrap-server kafka:9092
+                kafka-topics --create --topic post_text --partitions 3 --replication-factor 1 --bootstrap-server kafka:9092
+                kafka-topics --create --topic post_photo --partitions 3 --replication-factor 1 --bootstrap-server kafka:9092
+                kafka-topics --create --topic post_audio --partitions 3 --replication-factor 1 --bootstrap-server kafka:9092
+                kafka-topics --create --topic post_video --partitions 3 --replication-factor 1 --bootstrap-server kafka:9092
+                kafka-topics --create --topic post_exchange --partitions 3 --replication-factor 1 --bootstrap-server kafka:9092
+        networks:
+            - shared_network
+
+networks:
+  shared_network:
+    external: true
