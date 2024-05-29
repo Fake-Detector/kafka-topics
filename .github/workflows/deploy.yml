@@ -38,4 +38,4 @@ jobs:
         
     - name: Extract files and deploy with Docker on VM
       run: |
-        gcloud compute ssh instance-1 --zone us-central1-c --command="rm -rf ~/deploy/kafka-topics && mkdir -p ~/deploy/kafka-topics && tar xzf ~/deploy/repo.tar.gz -C ~/deploy/kafka-topics && cd ~/deploy/kafka-topics && sudo docker image prune && sudo docker network create shared_network || true && sudo docker-compose up -d --build"
+        gcloud compute ssh instance-1 --zone us-central1-c --command="rm -rf ~/deploy/kafka-topics && mkdir -p ~/deploy/kafka-topics && tar xzf ~/deploy/repo.tar.gz -C ~/deploy/kafka-topics && cd ~/deploy/kafka-topics && sudo docker image prune -f && sudo docker network create shared_network || true && sudo docker-compose down && sudo docker-compose up -d --build"
