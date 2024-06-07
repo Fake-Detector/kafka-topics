@@ -7,6 +7,7 @@ on:
 
 jobs:
   deploy:
+    if: github.event_name == 'push' && contains(github.event.head_commit.message, '[run-deploy-cpu]')
     runs-on: ubuntu-latest
 
     steps:
@@ -40,6 +41,7 @@ jobs:
       run: |
         gcloud compute ssh instance-1 --zone us-central1-c --command="rm -rf ~/deploy/kafka-topics && mkdir -p ~/deploy/kafka-topics && tar xzf ~/deploy/repo.tar.gz -C ~/deploy/kafka-topics && cd ~/deploy/kafka-topics && sudo docker image prune -f && sudo docker network create shared_network || true && sudo docker-compose down && sudo docker-compose up -d --build"
   deploy_gpu:
+    if: github.event_name == 'push' && contains(github.event.head_commit.message, '[run-deploy-gpu]')
     runs-on: ubuntu-latest
 
     steps:
